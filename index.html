@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RPG TEAM</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101010;color:white;font-family:Arial}
+header{text-align:center;padding:25px;background:#1b1b1b;border-bottom:3px solid #e32636}
+header h1{color:#ff3038;font-size:32px;margin:0}
+header p{color:#aaa}
+nav{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;padding:12px;background:#191919}
+button{background:#e32636;color:white;border:0;border-radius:8px;padding:12px;cursor:pointer;font-weight:bold}
+button:hover{background:#aa1723}
+main{max-width:750px;margin:auto;padding:15px}
+.page{display:none}
+.page.active{display:block}
+.card{background:#202020;padding:18px;border-radius:12px;margin:15px 0;border-left:3px solid #e32636}
+h2{color:#ff4048}
+input,select,textarea{width:100%;padding:12px;margin:8px 0 15px;background:#292929;color:white;border:1px solid #555;border-radius:7px}
+.member{background:#292929;padding:14px;margin:10px 0;border-radius:8px}
+.small{color:#aaa;font-size:12px}
+</style>
+</head>
+<body>
+
+<header>
+<h1>⚔ RPG TEAM</h1>
+<p>ТВОЯ КОМАНДА. ТВОЯ ИСТОРИЯ.</p>
+</header>
+
+<nav>
+<button onclick="show('home')">Главная</button>
+<button onclick="show('join')">Вступить</button>
+<button onclick="show('members')">Участники</button>
+<button onclick="show('applications')">Заявки</button>
+<button onclick="show('leader')">👑 Лидер</button>
+</nav>
+
+<main>
+<section id="home" class="page active">
+<div class="card">
+<h2>Добро пожаловать в RPG TEAM!</h2>
+<p>Мы создаём игровые видео, снимаем приключения и развиваемся вместе!</p>
+<p>🎮 Roblox</p>
+<p>⛏ Minecraft</p>
+<p>🎯 Fortnite</p>
+<button onclick="show('join')">ВСТУПИТЬ В КОМАНДУ</button>
+</div>
+<div class="card">
+<h2>📢 Новости</h2>
+<p id="news">🔥 НАБОР В RPG TEAM ОТКРЫТ!</p>
+</div>
+</section>
+
+<section id="join" class="page">
+<div class="card">
+<h2>📝 АНКЕТА УЧАСТНИКА</h2>
+<form id="joinForm">
+<label>Игровой ник</label>
+<input id="nickname" required maxlength="30">
+<label>Твоя игра</label>
+<select id="game">
+<option>Roblox</option>
+<option>Minecraft</option>
+<option>Fortnite</option>
+<option>Другое</option>
+</select>
+<label>Твоя роль</label>
+<select id="role">
+<option>Игрок</option>
+<option>Монтажёр</option>
+<option>Сценарист</option>
+<option>Дизайнер</option>
+<option>Озвучка</option>
+<option>Shorts-мейкер</option>
+</select>
+<label>Почему хочешь вступить?</label>
+<textarea id="about" maxlength="500"></textarea>
+<button type="submit">ОТПРАВИТЬ ЗАЯВКУ</button>
+</form>
+</div>
+</section>
+
+<section id="members" class="page">
+<h2>👥 НАША КОМАНДА</h2>
+<div id="memberList"></div>
+</section>
+
+<section id="applications" class="page">
+<h2>📋 МОИ ЗАЯВКИ</h2>
+<div id="myApplications"></div>
+</section>
+
+<section id="leader" class="page">
+<div class="card">
+<h2>👑 ПАНЕЛЬ ЛИДЕРА</h2>
+<p class="small">Демонстрационный режим. Пока доступен всем посетителям.</p>
+<h3>Опубликовать новость</h3>
+<textarea id="announcement" placeholder="Текст новости"></textarea>
+<button onclick="publishNews()">ОПУБЛИКОВАТЬ</button>
+</div>
+<h2>Заявки кандидатов</h2>
+<div id="adminApplications"></div>
+</section>
+</main>
+
+<script>
+function load(key,fallback){
+try{return JSON.parse(localStorage.getItem(key))??fallback}
+catch(e){return fallback}
+}
+
+let applications=load("rpgApplications",[]);
+let members=load("rpgMembers",[
+{name:"ERISON",role:"Основатель",game:"Roblox"}
+]);
+let news=localStorage.getItem("rpgNews")||
+"🔥 НАБОР В RPG TEAM ОТКРЫТ!";
+
+function save(){
+localStorage.setItem("rpgApplications",JSON.stringify(applications));
+localStorage.setItem("rpgMembers",JSON.stringify(members));
+localStorage.setItem("rpgNews",news);
+}
+
+function escapeHTML(s){
+return String(s).replace(/[&<>"']/g,c=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",
+'"':"&quot;","'":"&#39;"
+}[c]));
+}
+
+function show(id){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+render();
+}
+
+document.getElementById("joinForm").addEventListener("submit",e=>{
+e.preventDefault();
+applications.push({
+id:Date.now(),
+name:document.getElementById("nickname").value.trim(),
+game:document.getElementById("game").value,
+role:document.getElementById("role").value,
+about:document.getElementById("about").value,
+status:"На рассмотрении"
+});
+save();
+e.target.reset();
+alert("Заявка отправлена!");
+show("applications");
+});
+
+function approve(id){
+let a=applications.find(x=>x.id===id);
+if(!a||a.status!=="На рассмотрении")return;
+a.status="Принят";
+members.push({name:a.name,role:a.role,game:a.game});
+save();render();
+}
+
+function reject(id){
+let a=applications.find(x=>x.id===id);
+if(!a)return;
+a.status="Отклонён";
+save();render();
+}
+
+function publishNews(){
+let value=document.getElementById("announcement").value.trim();
+if(!value)return alert("Напиши новость!");
+news=value;
+save();
+document.getElementById("announcement").value="";
+alert("Новость опубликована!");
+render();
+}
+
+function render(){
+document.getElementById("news").textContent=news;
+
+document.getElementById("memberList").innerHTML=
+members.map(m=>`
+<div class="member">
+<b>${escapeHTML(m.name)}</b>
+<p>${escapeHTML(m.role)} · ${escapeHTML(m.game)}</p>
+</div>`).join("");
+
+document.getElementById("myApplications").innerHTML=
+applications.length?applications.map(a=>`
+<div class="member">
+<b>${escapeHTML(a.name)}</b>
+<p>${escapeHTML(a.game)} · ${escapeHTML(a.role)}</p>
+<p>Статус: ${escapeHTML(a.status)}</p>
+</div>`).join():"<p>Пока нет заявок.</p>";
+
+document.getElementById("adminApplications").innerHTML=
+applications.length?applications.map(a=>`
+<div class="member">
+<b>${escapeHTML(a.name)}</b>
+<p>${escapeHTML(a.game)} · ${escapeHTML(a.role)}</p>
+<p>${escapeHTML(a.about)}</p>
+<p>Статус: ${escapeHTML(a.status)}</p>
+${a.status==="На рассмотрении"?`
+<button onclick="approve(${a.id})">Принять</button>
+<button onclick="reject(${a.id})">Отклонить</button>`:""}
+</div>`).join():"<p>Новых заявок нет.</p>";
+}
+
+render();
+</script>
+</body>
+</html>

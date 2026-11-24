@@ -3,27 +3,30 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RPG TEAM</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#101010;color:white;font-family:Arial}
-header{text-align:center;padding:25px;background:#1b1b1b;border-bottom:3px solid #e32636}
-h1,h2{color:#ff3038}
-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;padding:12px;background:#191919}
-button{background:#e32636;color:white;border:0;border-radius:8px;padding:12px;cursor:pointer;font-weight:bold}
+body{margin:0;background:#101010;color:white;font-family:Arial,sans-serif}
+header{text-align:center;padding:25px;background:#191919}
+header h1{color:#ff3038;font-size:32px}
+header p{color:#aaa}
+nav{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:15px}
+button{background:#e32636;color:white;border:0;padding:13px 18px;border-radius:8px;font-size:15px;cursor:pointer}
+button:hover{background:#aa1723}
 main{max-width:750px;margin:auto;padding:15px}
-.page{display:none}
+.page{display:none;background:#1c1c1c;padding:20px;border-radius:12px;margin-top:15px}
 .page.active{display:block}
-.card,.member{background:#202020;padding:18px;border-radius:12px;margin:15px 0;border-left:3px solid #e32636}
-input,select,textarea{width:100%;padding:12px;margin:8px 0 15px;background:#292929;color:white;border:1px solid #555;border-radius:7px}
-.small{color:#aaa;font-size:12px}
-.hidden{display:none}
+h2{color:#ff3038}
+input,textarea{width:100%;padding:13px;margin:8px 0;background:#292929;color:white;border:1px solid #555;border-radius:7px}
+.card{background:#292929;padding:15px;border-radius:9px;margin:10px 0}
+footer{text-align:center;color:#777;padding:25px}
 </style>
 </head>
 <body>
+
 <header>
-<h1>⚔ RPG TEAM</h1>
+<h1>RPG TEAM</h1>
 <p>ТВОЯ КОМАНДА. ТВОЯ ИСТОРИЯ.</p>
 </header>
 
@@ -36,280 +39,84 @@ input,select,textarea{width:100%;padding:12px;margin:8px 0 15px;background:#2929
 </nav>
 
 <main>
-<section id="home" class="page active">
-<div class="card">
-<h2>Добро пожаловать в RPG TEAM!</h2>
-<p>Мы создаём игровые видео и развиваемся вместе!</p>
-<p>🎮 Roblox · Minecraft · Fortnite</p>
-<button onclick="show('join')">ВСТУПИТЬ В КОМАНДУ</button>
-</div>
-<div class="card">
-<h2>📢 Новости</h2>
-<p id="news">Загрузка...</p>
-</div>
-</section>
 
-<section id="login" class="page">
-<div class="card">
-<h2>Вход в аккаунт</h2>
-<p class="small">Войди, чтобы отправлять заявки и управлять командой.</p>
-<form id="authForm">
-<label>Email</label>
-<input id="email" type="email" required>
-<label>Пароль</label>
-<input id="password" type="password" required>
-<button type="submit">ВОЙТИ</button>
-</form>
-<p id="authMessage"></p>
-</div>
+<section id="home" class="page active">
+<h2>Добро пожаловать в RPG TEAM!</h2>
+<p>Здесь начинается твоя история.</p>
+<p>Присоединяйся к нашей команде!</p>
+<button onclick="show('join')">Вступить в команду</button>
 </section>
 
 <section id="join" class="page">
-<div class="card">
-<h2>📝 Анкета участника</h2>
-<p id="loginNotice">Для отправки заявки сначала войди в аккаунт.</p>
+<h2>Вступить в команду</h2>
 <form id="joinForm">
-<label>Игровой ник</label>
-<input id="nickname" maxlength="30" required>
-<label>Твоя игра</label>
-<select id="game">
-<option>Roblox</option>
-<option>Minecraft</option>
-<option>Fortnite</option>
-<option>Другое</option>
-</select>
-<label>Твоя роль</label>
-<select id="role">
-<option>Игрок</option>
-<option>Монтажёр</option>
-<option>Сценарист</option>
-<option>Дизайнер</option>
-<option>Озвучка</option>
-<option>Shorts-мейкер</option>
-</select>
-<label>Почему хочешь вступить?</label>
-<textarea id="about" maxlength="500"></textarea>
-<button type="submit">ОТПРАВИТЬ ЗАЯВКУ</button>
+<input id="playerName" placeholder="Твоё имя" required>
+<input id="playerNick" placeholder="Твой игровой ник" required>
+<textarea id="playerReason" placeholder="Почему хочешь вступить?" required></textarea>
+<button type="submit">Отправить заявку</button>
 </form>
-</div>
-</section>
-
-<section id="applications" class="page">
-<h2>📋 Мои заявки</h2>
-<div id="myApplications"></div>
 </section>
 
 <section id="members" class="page">
-<h2>👥 Наша команда</h2>
-<div id="memberList"></div>
+<h2>Участники команды</h2>
+<div id="memberList">Пока нет участников.</div>
+</section>
+
+<section id="applications" class="page">
+<h2>Мои заявки</h2>
+<div id="applicationList">Заявок пока нет.</div>
 </section>
 
 <section id="leader" class="page">
-<div class="card">
-<h2>👑 Панель лидера</h2>
-<div id="leaderContent" class="hidden">
-<h3>Заявки кандидатов</h3>
-<div id="adminApplications"></div>
-<h3>Опубликовать новость</h3>
-<textarea id="announcement" placeholder="Текст новости"></textarea>
-<button onclick="publishNews()">ОПУБЛИКОВАТЬ</button>
-</div>
-<p id="leaderNotice">Войди в аккаунт лидера.</p>
-</div>
+<h2>Панель лидера</h2>
+<p>Панель управления будет подключена к Firebase отдельно.</p>
 </section>
 
-<div class="card">
-<p id="accountStatus">Ты не вошёл в аккаунт.</p>
-<button id="logout" class="hidden">ВЫЙТИ</button>
-</div>
 </main>
 
-<script type="module">
-import {initializeApp}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+<footer>
+<p>© 2026 RPG TEAM</p>
+</footer>
 
-import {
-getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-import {
-getFirestore,collection,addDoc,getDocs,doc,
-updateDoc,setDoc,getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig={
-apiKey:"AIzaSyDLHu7QPaa61mDTRTtzYhdE6-DThoB1rOE",
-authDomain:"rpg-team-cb67a.firebaseapp.com",
-projectId:"rpg-team-cb67a",
-storageBucket:"rpg-team-cb67a.firebasestorage.app",
-messagingSenderId:"983182201147",
-appId:"1:983182201147:web:d576b4f89457dc376de71e",
-measurementId:"G-WL7ZJCWW61"
-};
-
-const ADMIN_UID="WsDAiJD5ciVdeIbNHOEUGwquRs22";
-
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
-
-let user=null;
-
-window.show=function(id){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-render();
-};
-
-function safe(s){
-return String(s??"").replace(/[&<>"']/g,c=>({
-"&":"&amp;","<":"&lt;",">":"&gt;",
-'"':"&quot;","'":"&#39;"
-}[c]));
+<script>
+function show(page){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(page).classList.add('active');
 }
 
-onAuthStateChanged(auth,async u=>{
-user=u;
-document.getElementById("accountStatus").textContent=
-u?"Вошёл: "+u.email:"Ты не вошёл в аккаунт.";
+let applications=JSON.parse(localStorage.getItem('rpgApplications')||'[]');
 
-document.getElementById("logout").classList.toggle("hidden",!u);
-
-const leader=u&&u.uid===ADMIN_UID;
-
-document.getElementById("leaderContent").classList.toggle("hidden",!leader);
-document.getElementById("leaderNotice").textContent=
-leader?"Ты вошёл как лидер.":"Войди в аккаунт лидера.";
-
-document.getElementById("joinForm").style.display=u?"block":"none";
-document.getElementById("loginNotice").textContent=
-u?"Ты можешь отправить заявку.":"Сначала войди через раздел входа.";
-
-await render();
-});
-
-document.getElementById("authForm").addEventListener("submit",async e=>{
-e.preventDefault();
-try{
-await signInWithEmailAndPassword(
-auth,
-document.getElementById("email").value,
-document.getElementById("password").value
-);
-document.getElementById("authMessage").textContent="Вход выполнен!";
-show("home");
-}catch(err){
-document.getElementById("authMessage").textContent="Ошибка входа. Проверь email и пароль.";
-}
-});
-
-document.getElementById("logout").onclick=()=>signOut(auth);
-
-document.getElementById("joinForm").addEventListener("submit",async e=>{
-e.preventDefault();
-if(!user)return alert("Сначала войди в аккаунт!");
-
-try{
-await addDoc(collection(db,"applications"),{
-uid:user.uid,
-name:document.getElementById("nickname").value.trim(),
-game:document.getElementById("game").value,
-role:document.getElementById("role").value,
-about:document.getElementById("about").value,
-status:"На рассмотрении",
-createdAt:Date.now()
-});
-e.target.reset();
-alert("Заявка отправлена!");
-show("applications");
-}catch(err){
-alert("Не удалось отправить заявку. Проверь подключение.");
-}
-});
-
-async function render(){
-try{
-const memberSnap=await getDocs(collection(db,"members"));
-document.getElementById("memberList").innerHTML=
-memberSnap.docs.map(d=>{
-const m=d.data();
-return `<div class="member"><b>${safe(m.name)}</b>
-<p>${safe(m.role)} · ${safe(m.game)}</p></div>`;
-}).join("")||"<p>Пока нет участников.</p>";
-
-const newsSnap=await getDoc(doc(db,"site","news"));
-document.getElementById("news").textContent=
-newsSnap.exists()?newsSnap.data().text:"🔥 НАБОР В RPG TEAM ОТКРЫТ!";
-
-if(!user){
-document.getElementById("myApplications").innerHTML=
-'<p>Войди в аккаунт, чтобы видеть свои заявки.</p>';
+function updateApplications(){
+let list=document.getElementById('applicationList');
+list.innerHTML='';
+if(!applications.length){
+list.textContent='Заявок пока нет.';
 return;
 }
-
-const snap=await getDocs(collection(db,"applications"));
-const all=snap.docs.map(d=>({id:d.id,...d.data()}));
-const mine=all.filter(a=>a.uid===user.uid);
-
-document.getElementById("myApplications").innerHTML=
-mine.map(a=>`<div class="member">
-<b>${safe(a.name)}</b>
-<p>${safe(a.game)} · ${safe(a.role)}</p>
-<p>Статус: ${safe(a.status)}</p>
-</div>`).join("")||"<p>Заявок пока нет.</p>";
-
-if(user.uid===ADMIN_UID){
-document.getElementById("adminApplications").innerHTML=
-all.map(a=>`<div class="member">
-<b>${safe(a.name)}</b>
-<p>${safe(a.game)} · ${safe(a.role)}</p>
-<p>${safe(a.about)}</p>
-<p>Статус: ${safe(a.status)}</p>
-${a.status==="На рассмотрении"?`
-<button onclick="approve('${a.id}')">Принять</button>
-<button onclick="reject('${a.id}')">Отклонить</button>`:""}
-</div>`).join("")||"<p>Заявок нет.</p>";
-}
-}catch(err){
-console.error(err);
-}
-}
-
-window.approve=async id=>{
-if(!user||user.uid!==ADMIN_UID)return;
-try{
-const ref=doc(db,"applications",id);
-const snap=await getDoc(ref);
-if(!snap.exists())return;
-const a=snap.data();
-
-await updateDoc(ref,{status:"Принят"});
-await setDoc(doc(db,"members",id),{
-name:a.name,role:a.role,game:a.game
+applications.forEach(a=>{
+let div=document.createElement('div');
+div.className='card';
+div.textContent=a.name+' | '+a.nick+' | '+a.reason;
+list.appendChild(div);
 });
-await render();
-}catch(e){alert("Ошибка: "+e.message);}
-};
+}
 
-window.reject=async id=>{
-if(!user||user.uid!==ADMIN_UID)return;
-try{
-await updateDoc(doc(db,"applications",id),{status:"Отклонён"});
-await render();
-}catch(e){alert("Ошибка: "+e.message);}
-};
+document.getElementById('joinForm').addEventListener('submit',function(e){
+e.preventDefault();
+applications.push({
+name:document.getElementById('playerName').value,
+nick:document.getElementById('playerNick').value,
+reason:document.getElementById('playerReason').value
+});
+localStorage.setItem('rpgApplications',JSON.stringify(applications));
+this.reset();
+updateApplications();
+show('applications');
+alert('Заявка сохранена!');
+});
 
-window.publishNews=async()=>{
-if(!user||user.uid!==ADMIN_UID)return;
-const value=document.getElementById("announcement").value.trim();
-if(!value)return alert("Напиши новость!");
-try{
-await setDoc(doc(db,"site","news"),{text:value});
-document.getElementById("announcement").value="";
-await render();
-alert("Новость опубликована!");
-}catch(e){alert("Ошибка публикации: "+e.message);}
-};
+updateApplications();
 </script>
+
 </body>
 </html>

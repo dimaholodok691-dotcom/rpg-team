@@ -3,120 +3,366 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>RPG TEAM</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#101010;color:white;font-family:Arial,sans-serif}
-header{text-align:center;padding:25px;background:#191919}
-header h1{color:#ff3038;font-size:32px}
-header p{color:#aaa}
-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:15px}
-button{background:#e32636;color:white;border:0;padding:13px 18px;border-radius:8px;font-size:15px;cursor:pointer}
-button:hover{background:#aa1723}
-main{max-width:750px;margin:auto;padding:15px}
-.page{display:none;background:#1c1c1c;padding:20px;border-radius:12px;margin-top:15px}
-.page.active{display:block}
-h2{color:#ff3038}
-input,textarea{width:100%;padding:13px;margin:8px 0;background:#292929;color:white;border:1px solid #555;border-radius:7px}
-.card{background:#292929;padding:15px;border-radius:9px;margin:10px 0}
-footer{text-align:center;color:#777;padding:25px}
+body{margin:0;background:#090909;color:#fff;font-family:Arial,sans-serif}
+header{background:#151515;border-bottom:3px solid #c00;text-align:center;padding:25px 12px}
+h1{color:#e00000;font-size:36px;margin:0}
+main{max-width:800px;margin:25px auto;padding:12px}
+section{background:#171717;border:1px solid #383838;border-radius:10px;padding:18px;margin-bottom:18px}
+h2{color:#ed2525;margin-top:0}
+input,textarea{display:block;width:100%;padding:12px;margin:10px 0;background:#090909;color:white;border:1px solid #555;border-radius:6px;font-size:16px}
+textarea{min-height:100px}
+button{background:#c90000;color:white;border:0;border-radius:6px;padding:12px 17px;margin:5px 4px 5px 0;font-size:15px;cursor:pointer}
+button:hover{background:#ed2222}
+.secondary{background:#444}
+.item{border:1px solid #444;border-radius:7px;padding:12px;margin:12px 0;overflow-wrap:anywhere}
+.status{color:#ffbf45}
+#message,#loginMessage,#newsMessage{color:#ffbf45}
+.hidden{display:none}
+footer{text-align:center;color:#777;padding:20px}
 </style>
 </head>
 <body>
 
 <header>
 <h1>RPG TEAM</h1>
-<p>ТВОЯ КОМАНДА. ТВОЯ ИСТОРИЯ.</p>
+<p>Официальный сайт команды</p>
 </header>
 
-<nav>
-<button onclick="show('home')">Главная</button>
-<button onclick="show('join')">Вступить</button>
-<button onclick="show('members')">Участники</button>
-<button onclick="show('applications')">Мои заявки</button>
-<button onclick="show('leader')">👑 Лидер</button>
-</nav>
-
 <main>
-
-<section id="home" class="page active">
-<h2>Добро пожаловать в RPG TEAM!</h2>
-<p>Здесь начинается твоя история.</p>
-<p>Присоединяйся к нашей команде!</p>
-<button onclick="show('join')">Вступить в команду</button>
+<section>
+<h2>Заявка в команду</h2>
+<input id="appName" maxlength="30" placeholder="Твоё имя или ник">
+<textarea id="appAbout" maxlength="500" placeholder="Расскажи немного о себе"></textarea>
+<button id="sendApplication">Отправить заявку</button>
+<p id="message"></p>
 </section>
 
-<section id="join" class="page">
-<h2>Вступить в команду</h2>
-<form id="joinForm">
-<input id="playerName" placeholder="Твоё имя" required>
-<input id="playerNick" placeholder="Твой игровой ник" required>
-<textarea id="playerReason" placeholder="Почему хочешь вступить?" required></textarea>
-<button type="submit">Отправить заявку</button>
-</form>
-</section>
-
-<section id="members" class="page">
+<section>
 <h2>Участники команды</h2>
-<div id="memberList">Пока нет участников.</div>
+<div id="members">Загрузка...</div>
 </section>
 
-<section id="applications" class="page">
-<h2>Мои заявки</h2>
-<div id="applicationList">Заявок пока нет.</div>
+<section>
+<h2>Новости команды</h2>
+<div id="news">Загрузка...</div>
 </section>
 
-<section id="leader" class="page">
+<section>
 <h2>Панель лидера</h2>
-<p>Панель управления будет подключена к Firebase отдельно.</p>
-</section>
+<div id="loginPanel">
+<p>Вход только для лидера команды.</p>
+<input id="leaderEmail" type="email" placeholder="Почта лидера">
+<input id="leaderPassword" type="password" placeholder="Пароль">
+<button id="leaderLogin">Войти</button>
+<p id="loginMessage"></p>
+</div>
 
+<div id="leaderPanel" class="hidden">
+<p>Панель лидера</p>
+<button id="logout" class="secondary">Выйти</button>
+
+<h3>Заявки</h3>
+<div id="applications">Загрузка...</div>
+
+<h3>Новая новость</h3>
+<textarea id="newsText" maxlength="1000" placeholder="Напиши новость"></textarea>
+<button id="publishNews">Опубликовать</button>
+<p id="newsMessage"></p>
+</div>
+</section>
 </main>
 
-<footer>
-<p>© 2026 RPG TEAM</p>
-</footer>
+<footer>RPG TEAM</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-function show(page){
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-document.getElementById(page).classList.add('active');
+const firebaseConfig = {
+  apiKey: "AIzaSyDLHu7QPaa61mDTRTtzYhdE6-DThoB1rOE",
+  authDomain: "rpg-team-cb67a.firebaseapp.com",
+  projectId: "rpg-team-cb67a",
+  storageBucket: "rpg-team-cb67a.firebasestorage.app",
+  messagingSenderId: "983182201147",
+  appId: "1:983182201147:web:d576b4f89457dc376de71e",
+  measurementId: "G-WL7ZJCWW61"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+const LEADER_UID = "WsDAiJD5ciVdeIbNHOEUGwquRs22";
+const el = id => document.getElementById(id);
+const isLeader = () =>
+  auth.currentUser &&
+  auth.currentUser.uid === LEADER_UID;
+
+function show(id, text) {
+  el(id).textContent = text;
 }
 
-let applications=JSON.parse(localStorage.getItem('rpgApplications')||'[]');
+// Авторизация посетителей
+auth.onAuthStateChanged(async user => {
+  if (!user) {
+    try {
+      await auth.signInAnonymously();
+    } catch (error) {
+      show("message", "Ошибка подключения к Firebase.");
+      console.error(error);
+    }
+    return;
+  }
 
-function updateApplications(){
-let list=document.getElementById('applicationList');
-list.innerHTML='';
-if(!applications.length){
-list.textContent='Заявок пока нет.';
-return;
+  const leader = isLeader();
+
+  el("loginPanel").classList.toggle("hidden", leader);
+  el("leaderPanel").classList.toggle("hidden", !leader);
+
+  if (leader) loadApplications();
+});
+
+// Отправка заявки
+el("sendApplication").addEventListener("click", async () => {
+  const name = el("appName").value.trim();
+  const about = el("appAbout").value.trim();
+
+  if (!name || !about) {
+    show("message", "Заполни оба поля.");
+    return;
+  }
+
+  try {
+    if (!auth.currentUser) {
+      await auth.signInAnonymously();
+    }
+
+    await db.collection("applications").add({
+      uid: auth.currentUser.uid,
+      name: name,
+      about: about,
+      status: "На рассмотрении",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    el("appName").value = "";
+    el("appAbout").value = "";
+    show("message", "Заявка успешно отправлена!");
+  } catch (error) {
+    show("message", "Не удалось отправить заявку. Проверь Firebase.");
+    console.error(error);
+  }
+});
+
+// Вход лидера
+el("leaderLogin").addEventListener("click", async () => {
+  const email = el("leaderEmail").value.trim();
+  const password = el("leaderPassword").value;
+
+  if (!email || !password) {
+    show("loginMessage", "Введи почту и пароль.");
+    return;
+  }
+
+  try {
+    const result = await auth.signInWithEmailAndPassword(email, password);
+
+    if (result.user.uid !== LEADER_UID) {
+      await auth.signOut();
+      show("loginMessage", "Этот аккаунт не является аккаунтом лидера.");
+      return;
+    }
+
+    el("leaderPassword").value = "";
+    show("loginMessage", "Вход выполнен.");
+  } catch (error) {
+    show("loginMessage", "Не удалось войти. Проверь почту и пароль.");
+    console.error(error);
+  }
+});
+
+// Выход
+el("logout").addEventListener("click", async () => {
+  await auth.signOut();
+});
+
+// Загрузка заявок
+async function loadApplications() {
+  if (!isLeader()) return;
+
+  try {
+    const snapshot = await db.collection("applications")
+      .orderBy("createdAt", "desc").get();
+
+    const container = el("applications");
+    container.innerHTML = "";
+
+    if (snapshot.empty) {
+      container.textContent = "Заявок пока нет.";
+      return;
+    }
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const item = document.createElement("div");
+      item.className = "item";
+
+      const name = document.createElement("h3");
+      name.textContent = data.name || "Без имени";
+
+      const about = document.createElement("p");
+      about.textContent = data.about || "";
+
+      const status = document.createElement("p");
+      status.className = "status";
+      status.textContent = "Статус: " + data.status;
+
+      item.append(name, about, status);
+
+      if (data.status === "На рассмотрении") {
+        const accept = document.createElement("button");
+        accept.textContent = "Принять";
+        accept.addEventListener("click", () =>
+          changeApplication(doc.id, data, "Принята")
+        );
+
+        const reject = document.createElement("button");
+        reject.textContent = "Отклонить";
+        reject.className = "secondary";
+        reject.addEventListener("click", () =>
+          changeApplication(doc.id, data, "Отклонена")
+        );
+
+        item.append(accept, reject);
+      }
+
+      container.appendChild(item);
+    });
+  } catch (error) {
+    show("applications", "Не удалось загрузить заявки.");
+    console.error(error);
+  }
 }
-applications.forEach(a=>{
-let div=document.createElement('div');
-div.className='card';
-div.textContent=a.name+' | '+a.nick+' | '+a.reason;
-list.appendChild(div);
-});
+
+// Принятие или отклонение заявки
+async function changeApplication(id, data, status) {
+  if (!isLeader()) return;
+
+  try {
+    await db.collection("applications").doc(id).update({
+      status: status
+    });
+
+    if (status === "Принята") {
+      await db.collection("members").doc(id).set({
+        name: data.name,
+        about: data.about
+      });
+    }
+
+    await loadApplications();
+    await loadMembers();
+  } catch (error) {
+    alert("Не удалось изменить заявку.");
+    console.error(error);
+  }
 }
 
-document.getElementById('joinForm').addEventListener('submit',function(e){
-e.preventDefault();
-applications.push({
-name:document.getElementById('playerName').value,
-nick:document.getElementById('playerNick').value,
-reason:document.getElementById('playerReason').value
-});
-localStorage.setItem('rpgApplications',JSON.stringify(applications));
-this.reset();
-updateApplications();
-show('applications');
-alert('Заявка сохранена!');
+// Загрузка участников
+async function loadMembers() {
+  try {
+    const snapshot = await db.collection("members").get();
+    const container = el("members");
+    container.innerHTML = "";
+
+    if (snapshot.empty) {
+      container.textContent = "Участников пока нет.";
+      return;
+    }
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const item = document.createElement("div");
+      item.className = "item";
+
+      const name = document.createElement("h3");
+      name.textContent = data.name || "Участник";
+
+      const about = document.createElement("p");
+      about.textContent = data.about || "";
+
+      item.append(name, about);
+      container.appendChild(item);
+    });
+  } catch (error) {
+    show("members", "Не удалось загрузить участников.");
+    console.error(error);
+  }
+}
+
+// Публикация новости
+el("publishNews").addEventListener("click", async () => {
+  if (!isLeader()) return;
+
+  const text = el("newsText").value.trim();
+
+  if (!text) {
+    show("newsMessage", "Напиши текст новости.");
+    return;
+  }
+
+  try {
+    await db.collection("site").doc("news").set({
+      items: firebase.firestore.FieldValue.arrayUnion({
+        text: text,
+        createdAt: new Date().toISOString()
+      })
+    }, { merge: true });
+
+    el("newsText").value = "";
+    show("newsMessage", "Новость опубликована.");
+    await loadNews();
+  } catch (error) {
+    show("newsMessage", "Не удалось опубликовать новость.");
+    console.error(error);
+  }
 });
 
-updateApplications();
+// Загрузка новостей
+async function loadNews() {
+  try {
+    const doc = await db.collection("site").doc("news").get();
+    const container = el("news");
+    container.innerHTML = "";
+
+    const items = doc.exists ? (doc.data().items || []) : [];
+
+    if (!items.length) {
+      container.textContent = "Новостей пока нет.";
+      return;
+    }
+
+    items.slice().reverse().forEach(news => {
+      const item = document.createElement("div");
+      item.className = "item";
+      item.textContent = news.text;
+      container.appendChild(item);
+    });
+  } catch (error) {
+    show("news", "Не удалось загрузить новости.");
+    console.error(error);
+  }
+}
+
+// Первоначальная загрузка
+loadMembers();
+loadNews();
 </script>
-
 </body>
 </html>
